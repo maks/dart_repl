@@ -1,10 +1,10 @@
-name: dart_repl
-description: A sample command-line application.
-version: 1.0.0
-# homepage: https://www.example.com
+name: repl
+description: A REPL for Dart.
+version: 0.0.1
+homepage: https://www.github.com/maks/dart_repl
 
 environment:
-  sdk: '>=2.16.0-134.0.dev <3.0.0'
+  sdk: '>=2.15.0 <3.0.0'
 
 
 # dependencies:
