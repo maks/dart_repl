@@ -6,10 +6,10 @@ homepage: https://www.github.com/maks/dart_repl
 environment:
   sdk: '>=2.15.0 <3.0.0'
 
-
 # dependencies:
 #   path: ^1.8.0
-
 dev_dependencies:
   lints: ^1.0.0
   test: ^1.16.0
+dependencies:
+  vm_service: ^8.1.0

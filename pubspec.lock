@@ -303,7 +303,7 @@ packages:
     source: hosted
     version: "1.3.0"
   vm_service:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: vm_service
       url: "https://pub.dartlang.org"
