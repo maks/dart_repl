@@ -28,11 +28,19 @@ Future repl(VmService vmService) async {
       break;
     }
     try {
-      final result = await vmService.evaluate(
-          isolateId, isolate.rootLib?.id ?? '', input) as InstanceRef;
-      final value = result.valueAsString;
-      if (value != null) {
-        print(value);
+      if (input.startsWith('var') || input.startsWith('import')) {
+        final scratch = File('bin/scratchpad.dart');
+        scratch.writeAsStringSync(input + '\n',
+            mode: FileMode.append, flush: true);
+        vmService.reloadSources(isolateId);
+        print('reloaded');
+      } else {
+        final result = await vmService.evaluate(
+            isolateId, isolate.rootLib?.id ?? '', input) as InstanceRef;
+        final value = result.valueAsString;
+        if (value != null) {
+          print(value);
+        }
       }
     } on Exception catch (errorRef) {
       print(errorRef);
