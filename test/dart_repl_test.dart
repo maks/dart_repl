@@ -1,4 +1,4 @@
-import 'package:repl/dart_repl.dart';
+import 'package:repl/repl.dart';
 import 'package:test/test.dart';
 
 void main() {
