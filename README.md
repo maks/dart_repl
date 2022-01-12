@@ -10,10 +10,17 @@ and the [recharge package](https://github.com/ajinasokan/recharge)
 
 * [X] MVP with expression evaluation
 * [ ] Use code from BlackHC's work to parse input for statements vs expressions
+* [ ] Support built in package imports
+* [ ] Support arbitrary package imports
 * [ ] Use hotreload with a scratchpad file
 * [ ] Use scratchpad with dedicated Isolate
 * [ ] Use `cli_repl` for better repl ergonomics
 * [ ] Use standard `pub activate` for package to run its binary instead of shell script
+* [ ] Improve usage documentation
+
+## Usage
+
+Clone this repo, then from the top level of this repo, run the bash shell script: `bin\dartr`
 
 ## Contributing
 
