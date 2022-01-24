@@ -1,5 +1,6 @@
 import 'dart:developer' as dev;
 import 'dart:io';
+import 'package:repl/parser.dart';
 import 'package:vm_service/vm_service.dart' show InstanceRef, VmService;
 import 'package:vm_service/vm_service_io.dart' as vms;
 import 'package:vm_service/utils.dart' as vmutils;
@@ -28,18 +29,30 @@ Future repl(VmService vmService) async {
       break;
     }
     try {
-      if (input.startsWith('var') || input.startsWith('import')) {
-        final scratch = File('bin/scratchpad.dart');
-        scratch.writeAsStringSync(input + '\n',
-            mode: FileMode.append, flush: true);
+      final scratch = File('bin/scratchpad.dart');
+      if (input.startsWith('import')) {
+        final existing = scratch.readAsStringSync();
+        scratch.writeAsStringSync(input + '\n' + existing,
+            mode: FileMode.write, flush: true);
         vmService.reloadSources(isolateId);
         print('reloaded');
       } else {
-        final result = await vmService.evaluate(
-            isolateId, isolate.rootLib?.id ?? '', input) as InstanceRef;
-        final value = result.valueAsString;
-        if (value != null) {
-          print(value);
+        if (isStatement(input)) {
+          print('Statement: $input');
+          scratch.writeAsStringSync(input + '\n',
+              mode: FileMode.append, flush: true);
+          vmService.reloadSources(isolateId);
+          print('reloaded');
+        } else if (isExpression(input)) {
+          print('Expression: $input');
+          final result = await vmService.evaluate(
+              isolateId, isolate.rootLib?.id ?? '', input) as InstanceRef;
+          final value = result.valueAsString;
+          if (value != null) {
+            print(value);
+          }
+        } else {
+          print('not recognised: $input');
         }
       }
     } on Exception catch (errorRef) {
