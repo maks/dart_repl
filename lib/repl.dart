@@ -1,25 +1,30 @@
-import 'dart:developer' as dev;
 import 'dart:io';
 import 'package:repl/parser.dart';
 import 'package:vm_service/vm_service.dart' show InstanceRef, VmService;
-import 'package:vm_service/vm_service_io.dart' as vms;
-import 'package:vm_service/utils.dart' as vmutils;
 
-Future repl(VmService vmService) async {
+late final VmService vms;
+late final String isolateId;
+
+Future repl(VmService vmService, String scratchPath) async {
   // Get currently running VM
+  vms = vmService;
   final vm = await vmService.getVM();
   final isolateRef = vm.isolates?.first;
   if (isolateRef == null) {
     throw Exception("unable to get reference to current Isolate");
   }
-  final isolateId = isolateRef.id;
-  if (isolateId == null) {
+  if (isolateRef.id == null) {
     throw Exception("unable to get ID for current Isolate");
   }
+  isolateId = isolateRef.id!;
+
   final isolate = await vmService.getIsolate(isolateId);
 
+  final scratch = File(scratchPath);
+  scratch.writeAsStringSync('');
+
   while (true) {
-    stdout.write('>>> ');
+    stdout.write('> ');
 
     final input = stdin.readLineSync();
     if (input == null || input == 'exit()') {
@@ -29,13 +34,14 @@ Future repl(VmService vmService) async {
       break;
     }
     try {
-      final scratch = File('bin/scratchpad.dart');
       if (input.startsWith('import')) {
         final existing = scratch.readAsStringSync();
         scratch.writeAsStringSync(input + '\n' + existing,
             mode: FileMode.write, flush: true);
-        vmService.reloadSources(isolateId);
-        print('reloaded');
+        reload();
+      } else if (input.startsWith('print(') || input.startsWith('reload(')) {
+        await vmService.evaluate(isolateId, isolate.rootLib?.id ?? '', input)
+            as InstanceRef;
       } else {
         if (isStatement(input)) {
           scratch.writeAsStringSync(input + '\n',
@@ -60,15 +66,7 @@ Future repl(VmService vmService) async {
   exit(0);
 }
 
-Future<VmService> getOwnVmService() async {
-  // Observatory URL is like: http://127.0.0.1:8181/u31D8b3VvmM=/
-  // Websocket endpoint for that will be: ws://127.0.0.1:8181/reBbXy32L6g=/ws
-  final serverUri = (await dev.Service.getInfo()).serverUri;
-  if (serverUri == null) {
-    throw Exception('No VM service. Run with --enable-vm-service');
-  }
-  final wsUri = vmutils.convertToWebSocketUrl(serviceProtocolUrl: serverUri);
-
-  // Get VM service
-  return await vms.vmServiceConnectUri(wsUri.toString());
+void reload() {
+  vms.reloadSources(isolateId);
+  print('reloaded');
 }
