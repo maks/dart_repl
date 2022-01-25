@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:repl/parser.dart';
-import 'package:vm_service/vm_service.dart' show InstanceRef, VmService;
+import 'package:vm_service/vm_service.dart'
+    show ErrorRef, InstanceRef, VmService;
 
 late final VmService vms;
 late final String isolateId;
@@ -40,8 +41,7 @@ Future repl(VmService vmService, String scratchPath) async {
             mode: FileMode.write, flush: true);
         reload();
       } else if (input.startsWith('print(') || input.startsWith('reload(')) {
-        await vmService.evaluate(isolateId, isolate.rootLib?.id ?? '', input)
-            as InstanceRef;
+        await vmService.evaluate(isolateId, isolate.rootLib?.id ?? '', input);
       } else {
         if (isStatement(input)) {
           scratch.writeAsStringSync(input + '\n',
@@ -50,10 +50,16 @@ Future repl(VmService vmService, String scratchPath) async {
           print('reloaded');
         } else if (isExpression(input)) {
           final result = await vmService.evaluate(
-              isolateId, isolate.rootLib?.id ?? '', input) as InstanceRef;
-          final value = result.valueAsString;
-          if (value != null) {
-            print(value);
+              isolateId, isolate.rootLib?.id ?? '', input);
+          if (result is InstanceRef) {
+            final value = result.valueAsString;
+            if (value != null) {
+              print(value);
+            }
+          } else if (result is ErrorRef) {
+            print('error: $result');
+          } else {
+            print('unknown error');
           }
         } else {
           print('not recognised: $input');
