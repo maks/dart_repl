@@ -38,13 +38,11 @@ Future repl(VmService vmService) async {
         print('reloaded');
       } else {
         if (isStatement(input)) {
-          print('Statement: $input');
           scratch.writeAsStringSync(input + '\n',
               mode: FileMode.append, flush: true);
           vmService.reloadSources(isolateId);
           print('reloaded');
         } else if (isExpression(input)) {
-          print('Expression: $input');
           final result = await vmService.evaluate(
               isolateId, isolate.rootLib?.id ?? '', input) as InstanceRef;
           final value = result.valueAsString;

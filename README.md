@@ -15,13 +15,24 @@ and the [recharge package](https://github.com/ajinasokan/recharge)
 * [ ] Use hotreload with a scratchpad file
 * [ ] Use scratchpad with dedicated Isolate
 * [ ] Use `cli_repl` for better repl ergonomics
-* [ ] Use standard `pub activate` for package to run its binary instead of shell script
+* [X] Use standard `pub activate` for package to run its binary instead of shell script
 * [ ] Improve usage documentation
 
 ## Usage
 
-Clone this repo, then from the top level of this repo, run the bash shell script: `bin\dartr`
+To install the repl use:
+```
+dart pub global activate repl
+```
 
+Then as long as the pub system cache is on your path you can run it using: `drepl`
+
+## Development
+
+Clone this repo, then from the top level of this repo and then run using: 
+```
+dart bin/main.dart
+```
 
 ## Future plans
 

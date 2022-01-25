@@ -6,6 +6,9 @@ homepage: https://www.github.com/maks/dart_repl
 environment:
   sdk: ">=2.15.0 <3.0.0"
 
+executables:
+  drepl: main
+
 # dependencies:
 #   path: ^1.8.0
 dev_dependencies:
