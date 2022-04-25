@@ -3,9 +3,6 @@ import 'package:repl/repl.dart';
 import 'package:repl/vm_service.dart';
 import 'package:vm_service/vm_service.dart' show VmService;
 
-// ignore: avoid_relative_lib_imports, unused_import
-import '../lib/scratchpad.dart';
-
 // Globals for easy access inside REPL
 late final VmService vmService;
 
@@ -15,7 +12,7 @@ Future wrappedMain(List<String> args) async {
   print(vm.version);
   print('Type `exit()` or Ctrl-d to quit.');
 
-  await repl(vmService, 'lib/scratchpad.dart');
+  await repl(vmService);
 }
 
 const vmServiceWasEnabledArg = '--vm-service-was-enabled';

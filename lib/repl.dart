@@ -1,12 +1,11 @@
 import 'dart:io';
-import 'package:analyzer/dart/analysis/results.dart';
 import 'package:repl/parser.dart';
 import 'package:vm_service/vm_service.dart' show ErrorRef, InstanceRef, VmService;
 
 late final VmService vms;
 late final String isolateId;
 
-Future repl(VmService vmService, String scratchPath) async {
+Future repl(VmService vmService) async {
   // Get currently running VM
   vms = vmService;
   final vm = await vmService.getVM();
@@ -21,12 +20,6 @@ Future repl(VmService vmService, String scratchPath) async {
 
   final isolate = await vmService.getIsolate(isolateId);
 
-  final scratch = File(scratchPath);
-  if (!scratch.existsSync()) {
-    throw InvalidPathResult();
-  }
-  scratch.writeAsStringSync('');
-
   while (true) {
     stdout.write('> ');
 
@@ -38,17 +31,13 @@ Future repl(VmService vmService, String scratchPath) async {
       break;
     }
     try {
-      if (input.startsWith('import')) {
-        final existing = scratch.readAsStringSync();
-        scratch.writeAsStringSync(input + '\n' + existing, mode: FileMode.write, flush: true);
-        reload();
-      } else if (input.startsWith('print(') || input.startsWith('reload(')) {
+      if (input.startsWith('print(')) {
         await vmService.evaluate(isolateId, isolate.rootLib?.id ?? '', input);
+      } else if (input.startsWith('reload()')) {
+        reload();
       } else {
         if (isStatement(input)) {
-          scratch.writeAsStringSync(input + '\n', mode: FileMode.append, flush: true);
-          vmService.reloadSources(isolateId);
-          print('reloaded');
+          print('Statements are not yet supported');
         } else if (isExpression(input)) {
           final result = await vmService.evaluate(isolateId, isolate.rootLib?.id ?? '', input);
           if (result is InstanceRef) {
