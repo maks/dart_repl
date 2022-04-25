@@ -3,20 +3,19 @@ import 'package:repl/repl.dart';
 import 'package:repl/vm_service.dart';
 import 'package:vm_service/vm_service.dart' show VmService;
 
-import '/tmp/scratchpad.dart';
+// ignore: avoid_relative_lib_imports, unused_import
+import '../lib/scratchpad.dart';
 
 // Globals for easy access inside REPL
 late final VmService vmService;
 
 Future wrappedMain(List<String> args) async {
-  print('Called with: ${args.join(' ')}'); // Replace by your current main code
-
   vmService = await getOwnVmService();
   final vm = await vmService.getVM();
   print(vm.version);
   print('Type `exit()` or Ctrl-d to quit.');
 
-  await repl(vmService, '/tmp/scratchpad.dart');
+  await repl(vmService, 'lib/scratchpad.dart');
 }
 
 const vmServiceWasEnabledArg = '--vm-service-was-enabled';
@@ -28,13 +27,7 @@ void main(List<String> args) {
   if (args.isNotEmpty && args.first == vmServiceWasEnabledArg) {
     wrappedMain(args.skip(1).toList());
   } else {
-    Process.start(
-        Platform.executable,
-        [
-          '--enable-vm-service',
-          Platform.script.toString(),
-          vmServiceWasEnabledArg
-        ],
+    Process.start(Platform.executable, ['--enable-vm-service', Platform.script.toString(), vmServiceWasEnabledArg],
         mode: ProcessStartMode.inheritStdio);
   }
 }
