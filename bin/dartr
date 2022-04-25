@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-# gets the dir of this shell script file, from: https://stackoverflow.com/a/246128/85472
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-
-dart --enable-vm-service "$SCRIPT_DIR/dartr.dart" "$@"
