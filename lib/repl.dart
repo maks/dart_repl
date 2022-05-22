@@ -31,9 +31,9 @@ Future repl(VmService vmService) async {
 
   final repl = Repl(prompt: '> ', continuation: '... ', validator: validator);
 
-  await for (final replInput in repl.runAsync()) {
+  for (final replInput in repl.run()) {
     if (replInput.trim().isNotEmpty) {
-      process(vmService, isolate, replInput);
+      await process(vmService, isolate, replInput);
     }
   }
 
@@ -45,7 +45,7 @@ void reload() {
   print('reloaded');
 }
 
-void process(VmService vmService, Isolate isolate, String input) async {
+Future<void> process(VmService vmService, Isolate isolate, String input) async {
   try {
     if (input.startsWith('print(')) {
       await vmService.evaluate(isolateId, isolate.rootLib?.id ?? '', input);
