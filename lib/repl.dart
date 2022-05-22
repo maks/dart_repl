@@ -1,10 +1,12 @@
 import 'dart:io';
 import 'package:analyzer/dart/analysis/results.dart';
+import 'package:cli_repl/cli_repl.dart';
 import 'package:repl/parser.dart';
-import 'package:vm_service/vm_service.dart' show ErrorRef, InstanceRef, VmService;
+import 'package:vm_service/vm_service.dart' show ErrorRef, InstanceRef, Isolate, VmService;
 
 late final VmService vms;
 late final String isolateId;
+late final File scratch;
 
 Future repl(VmService vmService) async {
   // Get currently running VM
@@ -21,56 +23,60 @@ Future repl(VmService vmService) async {
 
   final isolate = await vmService.getIsolate(isolateId);
 
-  final scratch = File("bin/scratchpad.dart");
+  scratch = File("bin/scratchpad.dart");
   if (!scratch.existsSync()) {
     throw InvalidPathResult();
   }
   scratch.writeAsStringSync('');
 
-  while (true) {
-    stdout.write('> ');
+  final repl = Repl(prompt: '> ', continuation: '... ', validator: validator);
 
-    final input = stdin.readLineSync();
-    if (input == null || input == 'exit()') {
-      if (input == null) {
-        stdout.write('\n');
-      }
-      break;
-    }
-    try {
-      if (input.startsWith('print(')) {
-        await vmService.evaluate(isolateId, isolate.rootLib?.id ?? '', input);
-      } else if (input.startsWith('reload()')) {
-        reload();
-      } else {
-        if (isStatement(input)) {
-          scratch.writeAsStringSync(input + '\n', mode: FileMode.append, flush: true);
-          vmService.reloadSources(isolateId);
-          print('reloaded');
-        } else if (isExpression(input)) {
-          final result = await vmService.evaluate(isolateId, isolate.rootLib?.id ?? '', input);
-          if (result is InstanceRef) {
-            final value = result.valueAsString;
-            if (value != null) {
-              print(value);
-            }
-          } else if (result is ErrorRef) {
-            print('error: $result');
-          } else {
-            print('unknown error');
-          }
-        } else {
-          print('not recognised: $input');
-        }
-      }
-    } on Exception catch (errorRef) {
-      print(errorRef);
+  await for (final replInput in repl.runAsync()) {
+    if (replInput.trim().isNotEmpty) {
+      process(vmService, isolate, replInput);
     }
   }
+
   exit(0);
 }
 
 void reload() {
   vms.reloadSources(isolateId);
   print('reloaded');
+}
+
+void process(VmService vmService, Isolate isolate, String input) async {
+  try {
+    if (input.startsWith('print(')) {
+      await vmService.evaluate(isolateId, isolate.rootLib?.id ?? '', input);
+    } else if (input.startsWith('reload()')) {
+      reload();
+    } else {
+      if (isStatement(input)) {
+        scratch.writeAsStringSync(input + '\n', mode: FileMode.append, flush: true);
+        vmService.reloadSources(isolateId);
+        print('reloaded');
+      } else if (isExpression(input)) {
+        final result = await vmService.evaluate(isolateId, isolate.rootLib?.id ?? '', input);
+        if (result is InstanceRef) {
+          final value = result.valueAsString;
+          if (value != null) {
+            print(value);
+          }
+        } else if (result is ErrorRef) {
+          print('error: $result');
+        } else {
+          print('unknown error');
+        }
+      } else {
+        print('not recognised: $input');
+      }
+    }
+  } on Exception catch (errorRef) {
+    print(errorRef);
+  }
+}
+
+bool validator(String? input) {
+  return true; //TODO actually validate the input
 }
