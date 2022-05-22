@@ -49,6 +49,11 @@ But of course that is a bit contrived an example as you could also do:
 `print()` - print to output
 `reload()` - trigger a hot-reload (doesn't work well at the moment)
 
+#### Editing, History, Shortcuts
+
+see the [cli_repl package documentation for supported short-cut keys](https://pub.dev/packages/cli_repl#navigation).
+
+
 ## Development
 
 Clone this repo, then from the top level of this repo and then run using: 
