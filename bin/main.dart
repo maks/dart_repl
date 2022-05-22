@@ -3,6 +3,7 @@ import 'package:repl/repl.dart';
 import 'package:repl/vm_service.dart';
 import 'package:vm_service/vm_service.dart' show VmService;
 
+// ignore: unused_import
 import 'scratchpad.dart';
 
 // Globals for easy access inside REPL

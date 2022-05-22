@@ -9,11 +9,11 @@ environment:
 executables:
   drepl: main
 
-# dependencies:
-#   path: ^1.8.0
+dependencies:
+  analyzer: ^3.2.0
+  cli_repl: ^0.2.2
+  vm_service: ^8.1.0
+
 dev_dependencies:
   lints: ^1.0.0
   test: ^1.16.0
-dependencies:
-  analyzer: ^3.2.0
-  vm_service: ^8.1.0
