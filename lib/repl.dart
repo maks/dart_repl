@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:analyzer/dart/analysis/results.dart';
 import 'package:repl/parser.dart';
 import 'package:vm_service/vm_service.dart' show ErrorRef, InstanceRef, VmService;
 
@@ -20,6 +21,12 @@ Future repl(VmService vmService) async {
 
   final isolate = await vmService.getIsolate(isolateId);
 
+  final scratch = File("bin/scratchpad.dart");
+  if (!scratch.existsSync()) {
+    throw InvalidPathResult();
+  }
+  scratch.writeAsStringSync('');
+
   while (true) {
     stdout.write('> ');
 
@@ -37,7 +44,9 @@ Future repl(VmService vmService) async {
         reload();
       } else {
         if (isStatement(input)) {
-          print('Statements are not yet supported');
+          scratch.writeAsStringSync(input + '\n', mode: FileMode.append, flush: true);
+          vmService.reloadSources(isolateId);
+          print('reloaded');
         } else if (isExpression(input)) {
           final result = await vmService.evaluate(isolateId, isolate.rootLib?.id ?? '', input);
           if (result is InstanceRef) {

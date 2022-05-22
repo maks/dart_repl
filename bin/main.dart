@@ -3,6 +3,8 @@ import 'package:repl/repl.dart';
 import 'package:repl/vm_service.dart';
 import 'package:vm_service/vm_service.dart' show VmService;
 
+import 'scratchpad.dart';
+
 // Globals for easy access inside REPL
 late final VmService vmService;
 
@@ -24,7 +26,13 @@ void main(List<String> args) {
   if (args.isNotEmpty && args.first == vmServiceWasEnabledArg) {
     wrappedMain(args.skip(1).toList());
   } else {
-    Process.start(Platform.executable, ['--enable-vm-service', Platform.script.toString(), vmServiceWasEnabledArg],
+    Process.start(
+        Platform.executable,
+        [
+          '--enable-vm-service',
+          Platform.script.toString(),
+          vmServiceWasEnabledArg,
+        ],
         mode: ProcessStartMode.inheritStdio);
   }
 }
