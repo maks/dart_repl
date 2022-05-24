@@ -5,7 +5,8 @@ import 'package:analyzer/error/error.dart';
 import 'package:analyzer/file_system/physical_file_system.dart';
 import 'package:cli_repl/cli_repl.dart';
 import 'package:repl/parser.dart';
-import 'package:vm_service/vm_service.dart' show ErrorRef, InstanceRef, Isolate, VmService;
+import 'package:vm_service/vm_service.dart'
+    show ErrorRef, InstanceRef, Isolate, VmService;
 
 late final VmService vms;
 late final String isolateId;
@@ -75,7 +76,8 @@ Future<void> process(VmService vmService, Isolate isolate, String input) async {
           print('reloaded');
         }
       } else if (isExpression(input)) {
-        final result = await vmService.evaluate(isolateId, isolate.rootLib?.id ?? '', input);
+        final result = await vmService.evaluate(
+            isolateId, isolate.rootLib?.id ?? '', input);
         if (result is InstanceRef) {
           final value = result.valueAsString;
           if (value != null) {
@@ -97,10 +99,12 @@ Future<void> process(VmService vmService, Isolate isolate, String input) async {
 
 Future<String?> validator(String input) async {
   await scratch.copy(nextPath);
-  nextScratch.writeAsStringSync(input + '\n', mode: FileMode.append, flush: true);
+  nextScratch.writeAsStringSync(input + '\n',
+      mode: FileMode.append, flush: true);
 
   final collection = AnalysisContextCollection(
-      includedPaths: [nextScratch.absolute.path], resourceProvider: PhysicalResourceProvider.INSTANCE);
+      includedPaths: [nextScratch.absolute.path],
+      resourceProvider: PhysicalResourceProvider.INSTANCE);
 
   for (final context in collection.contexts) {
     for (final filePath in context.contextRoot.analyzedFiles()) {
