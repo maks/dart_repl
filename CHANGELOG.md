@@ -1,3 +1,7 @@
+## 0.1.0+1
+
+- Fix missing lineInfo param
+
 ## 0.1.0
 
 - Add line editing, history, keyboard shortcuts
