@@ -1,6 +1,6 @@
 name: repl
 description: A REPL for Dart.
-version: 0.1.0+1
+version: 0.1.0+2
 homepage: https://www.github.com/maks/dart_repl
 
 environment:
