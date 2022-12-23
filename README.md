@@ -1,5 +1,8 @@
 # A REPL for Dart.
 
+# This package is no longer being maintained. Please see https://pub.dev/packages/interactive for a more full featured and ready to use REPL for Dart.
+
+
 ## Prior art
 
 Based on early version of [a proof of concept REPL environment for Dart](https://github.com/BlackHC/dart_repl/) from [a pair of articles by Andreas Kirsch](https://medium.com/dartlang/evolving-dart-repl-poc-233440a35e1f) and an example in the [Dart SDK tests](
