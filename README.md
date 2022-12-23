@@ -1,6 +1,6 @@
 # A REPL for Dart.
 
-# This package is no longer being maintained. Please see https://pub.dev/packages/interactive for a more full featured and ready to use REPL for Dart.
+# This package is no longer being maintained. Please see [https://pub.dev/packages/interactive](https://pub.dev/packages/interactive) for a more full featured and ready to use REPL for Dart.
 
 
 ## Prior art
